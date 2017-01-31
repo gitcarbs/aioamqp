@@ -287,6 +287,13 @@ class AmqpProtocol(asyncio.StreamReaderProtocol):
                 self.stop_now.set_result(None)
 
                 self._close_channels(exception=exc)
+            # IA temp code before bug is fixed
+            # https://github.com/Polyconseil/aioamqp/issues/115
+            except exceptions.ChannelClosed as exc:
+                logger.error('local_protocol.py: Channel closed, close connection')
+                self.stop_now.set_result(None)
+                self._close_channels(exception=exc)
+   
             except Exception:  # pylint: disable=broad-except
                 logger.exception('error on dispatch')
 
