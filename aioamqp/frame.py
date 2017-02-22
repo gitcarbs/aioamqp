@@ -409,6 +409,10 @@ class AmqpResponse:
     def read_frame(self):
         """Decode the frame"""
         try:
+            # IA, raise exception if reader has been set to none
+            if not self.reader:
+                raise exceptions.ChannelClosed()
+
             data = yield from self.reader.readexactly(7)
         except (asyncio.IncompleteReadError, socket.error) as ex:
             raise exceptions.AmqpClosedConnection() from ex
